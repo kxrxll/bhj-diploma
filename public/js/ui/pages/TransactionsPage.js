@@ -11,14 +11,22 @@ class TransactionsPage {
    * через registerEvents()
    * */
   constructor( element ) {
-
+    try {
+      this.element = element;
+      this.registerEvents()
+    } catch(e) {
+      console.log(e);
+    }
   }
 
   /**
    * Вызывает метод render для отрисовки страницы
    * */
   update() {
-
+    this.render();
+    if (this.lastOptions) {
+      this.render();
+    }
   }
 
   /**
@@ -28,7 +36,19 @@ class TransactionsPage {
    * TransactionsPage.removeAccount соответственно
    * */
   registerEvents() {
+    const deleteAcc = document.querySelector('.remove-account');
 
+    if (document.querySelector('.transaction__remove')) {
+    const deleteTrans = document.querySelector('.transaction__remove');
+    deleteTrans.addEventListener('click', function(e){
+      this.removeTransaction(id);
+    })
+    }
+
+    deleteAcc.addEventListener('click', function(e){
+      this.removeAccount().bind(this);
+    })
+    
   }
 
   /**
@@ -41,7 +61,14 @@ class TransactionsPage {
    * для обновления приложения
    * */
   removeAccount() {
-
+    if (this.lastOptions){
+      Account.remove({}, function(err, response){
+        if (response) {
+          alert('«Вы действительно хотите удалить счёт?»');
+          App.updateWidgets();
+        }
+      })
+    }
   }
 
   /**
@@ -51,7 +78,12 @@ class TransactionsPage {
    * либо обновляйте текущую страницу (метод update) и виджет со счетами
    * */
   removeTransaction( id ) {
-
+    Transaction.remove(id, function(err, response){
+      if (response) {
+        alert('«Вы действительно хотите удалить эту транзакцию?');
+        App.update()
+      }
+    })
   }
 
   /**
@@ -61,7 +93,19 @@ class TransactionsPage {
    * в TransactionsPage.renderTransactions()
    * */
   render(options){
-
+    if (options) {
+      this.lastOptions = options;
+      Account.get(options, function(err, response){
+        if (response){
+          this.renderTitle(response.name);
+        }
+      })
+      Transaction.list(options, function(err, response){
+        if (response){
+          TransactionsPage.renderTransactions(response.data)
+        }
+      })
+    }
   }
 
   /**
@@ -70,14 +114,16 @@ class TransactionsPage {
    * Устанавливает заголовок: «Название счёта»
    * */
   clear() {
-
+    this.renderTransactions([]);
+    this.renderTitle('Название счёта');
+    this.lastOptions = null;
   }
 
   /**
    * Устанавливает заголовок в элемент .content-title
    * */
   renderTitle(name){
-
+    this.element.querySelector('.content-title').textContent = name;
   }
 
   /**
@@ -85,7 +131,8 @@ class TransactionsPage {
    * в формат «10 марта 2019 г. в 03:20»
    * */
   formatDate(date){
-
+    const newDate = new Date(date);
+    return newDate;
   }
 
   /**
@@ -93,7 +140,30 @@ class TransactionsPage {
    * item - объект с информацией о транзакции
    * */
   getTransactionHTML(item){
-
+    item.date = this.formatDate(item.date);
+    const newElement = document.createElement('div');
+    newElement.style = 'transaction transaction_expense row';
+    newElement.innerHTML = `
+    <div class="col-md-7 transaction__details">
+      <div class="transaction__icon">
+          <span class="fa fa-money fa-2x"></span>
+      </div>
+      <div class="transaction__info">
+          <h4 class="transaction__title">${item.name}</h4>
+          <div class="transaction__date">${item.date}</div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="transaction__summ">${item.sum}<span class="currency">₽</span>
+      </div>
+    </div>
+    <div class="col-md-2 transaction__controls">
+        <button class="btn btn-danger transaction__remove" data-id="${item.id}">
+            <i class="fa fa-trash"></i>  
+        </button>
+    </div>
+    `
+    return newElement;
   }
 
   /**
@@ -101,6 +171,9 @@ class TransactionsPage {
    * используя getTransactionHTML
    * */
   renderTransactions(data){
-
+    const section = this.element.querySelector('.content');
+    data.forEach(item => {
+      section.append(getTransactionHTML(item))
+    })
   }
 }

@@ -14,7 +14,13 @@ class AccountsWidget {
    * необходимо выкинуть ошибку.
    * */
   constructor( element ) {
-
+    try {
+      this.element = element;
+      this.registerEvents();
+      this.update();
+    } catch(e) {
+      console.log(e);
+    }
   }
 
   /**
@@ -25,7 +31,15 @@ class AccountsWidget {
    * вызывает AccountsWidget.onSelectAccount()
    * */
   registerEvents() {
+    const createButton = this.element.querySelector('.create-account');
+    const sidebarAccs = Array.from(this.element.querySelectorAll('.account'))
 
+    createButton.addEventListener('click', function(){
+      App.getModal('createAccount').open();
+    })
+    sidebarAccs.forEach(item => item.addEventListener('click', function() {
+      this.onSelectAccount(e)
+    }.bind(this)))
   }
 
   /**
@@ -39,7 +53,18 @@ class AccountsWidget {
    * метода renderItem()
    * */
   update() {
-
+    if (User.current()) {
+      Account.list(
+        {}, function (err, response) {
+          this.clear();
+          if (response) {
+            response.data.forEach(item => {
+              this.renderItem(item);
+            })
+          }
+        }.bind(this)
+      )
+    }
   }
 
   /**
@@ -48,7 +73,8 @@ class AccountsWidget {
    * в боковой колонке
    * */
   clear() {
-
+    let itemsToDelete = Array.from(this.element.querySelectorAll('.account'));
+    itemsToDelete.forEach(item => item.remove());
   }
 
   /**
@@ -58,8 +84,10 @@ class AccountsWidget {
    * счёта класс .active.
    * Вызывает App.showPage( 'transactions', { account_id: id_счёта });
    * */
-  onSelectAccount( element ) {
-
+  onSelectAccount( e ) {
+    Array.from(document.querySelectorAll('.active')).forEach(item => item.classList.remove('active'));
+    e.target.classList.add('active');
+    App.showPage( 'transactions', { account_id: e.target.dataset.id });
   }
 
   /**
@@ -68,7 +96,17 @@ class AccountsWidget {
    * item - объект с данными о счёте
    * */
   getAccountHTML(item){
-
+    const newElement = document.createElement('li');
+    newElement.innerHTML =
+      `
+        <li class="active account" data-id="${item.id}">
+          <a href="#">
+            <span>${item.name}</span> /
+            <span>${item.sum} ₽</span>
+          </a>
+        </li>
+      `
+    return newElement;
   }
 
   /**
@@ -78,6 +116,6 @@ class AccountsWidget {
    * и добавляет его внутрь элемента виджета
    * */
   renderItem(data){
-
+    this.element.append(this.getAccountHTML(data));
   }
 }
