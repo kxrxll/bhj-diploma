@@ -8,7 +8,7 @@ class CreateTransactionForm extends AsyncForm {
    * метод renderAccountsList
    * */
   constructor(element) {
-    super(element)
+    super(element);
     this.renderAccountsList();
   }
 
@@ -17,17 +17,23 @@ class CreateTransactionForm extends AsyncForm {
    * Обновляет в форме всплывающего окна выпадающий список
    * */
   renderAccountsList() {
-    const accountSelect = this.element.querySelector('.accounts-select');
-    Account.list({}, function(err, response) {
-      if (response) {
-       response.data.forEach(item => {
-         const newElem = document.createElement('option');
-         newElem.style.value = item.id;
-         newElem.textContent = item.name;
-         accountSelect.append(newElem);
-       });
+    const accountSelect = this.element.querySelector(".accounts-select");
+    const options = accountSelect.querySelectorAll("option");
+    if (options) {
+      options.forEach((item) => item.remove());
+    }
+    Account.list({}, function (err, response) {
+      if (response && response.data) {
+        const newElemArr = [];
+        response.data.forEach((item) => {
+          let newElem = document.createElement("option");
+          newElem.value = item.id;
+          newElem.textContent = item.name;
+          newElemArr.push(newElem);
+        });
+        newElemArr.forEach((item) => accountSelect.appendChild(item));
       }
-    })
+    });
   }
 
   /**
@@ -38,16 +44,16 @@ class CreateTransactionForm extends AsyncForm {
    * */
   onSubmit(data) {
     Transaction.create(data, (err, response) => {
-      if (response.success) {
-        Array.from(document.querySelectorAll('.form')).forEach(item => item.reset());
-        App.getModal('newExpense').close();
-        App.getModal('newIncome').close();
-        User.setCurrent(response.user.name);
+      if (response) {
+        if (this.element.id === "new-income-form") {
+          App.getForm("createIncome").element.reset();
+          App.getModal("newIncome").close();
+        } else {
+          App.getForm("createExpense").element.reset();
+          App.getModal("newExpense").close();
+        }
         App.update();
-      } else {
-        console.log(response.error);
       }
-      App.getModal('login').close();
     });
   }
 }

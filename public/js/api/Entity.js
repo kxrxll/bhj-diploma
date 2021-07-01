@@ -8,15 +8,15 @@ class Entity {
    * Это могут быть счета или доходы/расходы
    * (в зависимости от того, что наследуется от Entity)
    * */
-  static url = '';
-  static list(data, callback){
+  static url = "";
+  static list(data, callback) {
     createRequest({
       url: this.url,
-      method: 'GET',
-      responseType: 'json',
+      method: "GET",
+      responseType: "json",
       data: data,
-      callback: callback
-    })
+      callback: callback,
+    });
   }
 
   /**
@@ -27,24 +27,24 @@ class Entity {
   static create(data, callback) {
     createRequest({
       url: this.url,
-      method: 'PUT',
-      responseType: 'json',
+      method: "PUT",
+      responseType: "json",
       data: data,
-      callback: callback
-    })
+      callback: callback,
+    });
   }
 
   /**
    * Удаляет информацию о счёте или доходе/расходе
    * (в зависимости от того, что наследуется от Entity)
    * */
-  static remove(data, callback ) {
+  static remove(data, callback) {
     createRequest({
       url: this.url,
-      method: 'DELETE',
-      responseType: 'json',
+      method: "DELETE",
+      responseType: "json",
       data: data,
-      callback: callback
-    })
+      callback: callback,
+    });
   }
 }

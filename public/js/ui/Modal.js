@@ -11,12 +11,12 @@ class Modal {
    * Если переданный элемент не существует,
    * необходимо выкинуть ошибку.
    * */
-  constructor(element){
-    try {
+  constructor(element) {
+    if (element) {
       this.element = element;
-      this.registerEvents()
-    } catch(e) {
-      console.log(e);
+      this.registerEvents();
+    } else {
+      throw new Error("No element!");
     }
   }
 
@@ -26,8 +26,12 @@ class Modal {
    * (с помощью метода Modal.onClose)
    * */
   registerEvents() {
-    const dataToDismiss = Array.from(this.element.querySelectorAll('*')).filter(item => item.dataset.dismiss === 'modal');
-    dataToDismiss.forEach(item => item.addEventListener('click', this.onClose.bind(this)))
+    const dataToDismiss = Array.from(this.element.querySelectorAll("*")).filter(
+      (item) => item.dataset.dismiss === "modal"
+    );
+    dataToDismiss.forEach((item) =>
+      item.addEventListener("click", this.onClose.bind(this))
+    );
   }
 
   /**
@@ -36,7 +40,7 @@ class Modal {
    * */
   onClose(e) {
     e.preventDefault();
-    e.target.closest('.modal-content').querySelector('.form').reset();
+    e.target.closest(".modal-content").querySelector(".form").reset();
     this.close();
   }
   /**
@@ -44,12 +48,12 @@ class Modal {
    * со значением «block»
    * */
   open() {
-    this.element.style.display = 'block';
+    this.element.style.display = "block";
   }
   /**
    * Закрывает окно: удаляет CSS-свойство display
    * */
-  close(){
+  close() {
     this.element.style.display = null;
   }
 }
