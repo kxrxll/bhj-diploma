@@ -99,16 +99,16 @@ class User {
    * Производит выход из приложения. После успешного
    * выхода необходимо вызвать метод User.unsetCurrent
    * */
-  static logout(data, callback) {
+  static logout(callback) {
     createRequest({
       url: this.url + "/logout",
       method: "POST",
       responseType: "json",
-      data: data,
       callback: (err, response) => {
         if (response.success) {
           this.unsetCurrent();
         }
+        callback(err, response);
       },
     });
   }

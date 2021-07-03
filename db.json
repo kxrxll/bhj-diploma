@@ -156,29 +156,9 @@
       "id": "6048d7xdkqlagatv"
     },
     {
-      "name": "Счет самый главный",
-      "user_id": "6048d8rtkqldfrip",
-      "id": "6048d8v8kqldg3oj"
-    },
-    {
       "name": "Не главный счет",
       "user_id": "6048d8rtkqldfrip",
       "id": "6048d8wokqldjnj5"
-    },
-    {
-      "name": "Еще один",
-      "user_id": "6048d8rtkqldfrip",
-      "id": "6048d8y9kqldmf2k"
-    },
-    {
-      "name": "Раз раз",
-      "user_id": "6048d8rtkqldfrip",
-      "id": "6048d8ygkqldms2h"
-    },
-    {
-      "name": "вах вах",
-      "user_id": "6048d8rtkqldfrip",
-      "id": "6048d8z2kqldnoyt"
     },
     {
       "name": "Уляля",
@@ -189,6 +169,11 @@
       "name": "Йохохо",
       "user_id": "6048d9a3kqleq34h",
       "id": "6048d9sukqlg27qc"
+    },
+    {
+      "name": "dsad",
+      "user_id": "6048d8rtkqldfrip",
+      "id": "6048deu3kqntk3dn"
     }
   ],
   "transactions": [
@@ -643,15 +628,6 @@
       "created_at": "2021-07-01T21:13:47.158Z"
     },
     {
-      "id": "6048d99skqlep136",
-      "type": "income",
-      "name": "Кирилл",
-      "sum": 2000,
-      "account_id": "6048d8v8kqldg3oj",
-      "user_id": "6048d8rtkqldfrip",
-      "created_at": "2021-07-01T21:14:54.785Z"
-    },
-    {
       "id": "6048d9axkqlesjkm",
       "type": "income",
       "name": "Доход!",
@@ -686,6 +662,15 @@
       "account_id": "6048d9sukqlg27qc",
       "user_id": "6048d9a3kqleq34h",
       "created_at": "2021-07-01T21:53:40.335Z"
+    },
+    {
+      "id": "6048devikqntmh5m",
+      "type": "income",
+      "name": "Кирилл",
+      "sum": 200,
+      "account_id": "6048d8wokqldjnj5",
+      "user_id": "6048d8rtkqldfrip",
+      "created_at": "2021-07-03T13:48:22.233Z"
     }
   ]
 }

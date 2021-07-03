@@ -22,9 +22,10 @@ class TransactionsPage {
   /**
    * Вызывает метод render для отрисовки страницы
    * */
-  update() {
-    this.render();
-    if (this.lastOptions) {
+  update(options) {
+    if (options) {
+      this.render();
+    } else {
       this.render(this.lastOptions);
     }
   }
@@ -51,14 +52,19 @@ class TransactionsPage {
    * либо обновляйте только виджет со счетами
    * для обновления приложения
    * */
-  removeAccount() {
-    if (window.confirm("Удаляем?")) {
-      Account.remove(data, (err, response) => {
-        if (response) {
-          App.updateWidgets();
-        }
-      });
-      this.clear();
+  removeAccount(e) {
+    if (e.target.closest(".remove-account")) {
+      if (window.confirm("Удаляем?")) {
+        let id = { id: e.target.closest(".remove-account").dataset.id };
+        Account.remove(id, (err, response) => {
+          if (response) {
+            console.log(id);
+            console.log(response);
+            this.clear();
+            App.updateWidgets();
+          }
+        });
+      }
     }
   }
 
@@ -68,16 +74,17 @@ class TransactionsPage {
    * По удалению транзакции вызовите метод App.update(),
    * либо обновляйте текущую страницу (метод update) и виджет со счетами
    * */
-  removeTransaction(id) {
-    if (id.target) {
-      id = id.target.id;
-    }
-    if (window.confirm("Удаляем?")) {
-      Transaction.remove(id, (err, response) => {
-        if (response) {
-          App.updateWidgets();
-        }
-      });
+  removeTransaction(e) {
+    if (e.target.closest(".transaction__remove")) {
+      let id = { id: e.target.closest(".transaction__remove").dataset.id };
+      if (window.confirm("Удаляем?")) {
+        Transaction.remove(id, (err, response) => {
+          if (response) {
+            this.update();
+            App.update();
+          }
+        });
+      }
     }
   }
 
@@ -89,24 +96,20 @@ class TransactionsPage {
    * */
   render(options) {
     if (options) {
-      if (this.lastOptions) {
-        options = this.lastOptions;
-      } else {
-        this.lastOptions = options;
-      }
+      this.lastOptions = options;
       if (options.account_id && options) {
         Account.get(options.account_id, (err, response) => {
           if (response) {
             this.renderTitle(response.data.name);
+            document.querySelector(".remove-account").dataset.id =
+              response.data.id;
           }
         });
       }
       Transaction.list(options, (err, response) => {
         if (response) {
-          if (this.element.querySelectorAll(".transaction")) {
-            Array.from(this.element.querySelectorAll(".transaction")).forEach(
-              (item) => item.remove()
-            );
+          if (this.element.querySelector(".transaction")) {
+            this.element.querySelector(".content").innerHTML = "";
           }
           this.renderTransactions(response.data);
         }
@@ -122,7 +125,6 @@ class TransactionsPage {
   clear() {
     this.element.querySelector(".content").innerHTML = "";
     this.renderTitle("Название счёта");
-    this.lastOptions = null;
   }
 
   /**
@@ -154,7 +156,7 @@ class TransactionsPage {
   getTransactionHTML(item) {
     item.date = this.formatDate(new Date(Date.parse(item.created_at)));
     return `
-    <div class="transaction transaction_expense row">
+    <div class="transaction transaction_${item.type} row">
       <div class="col-md-7 transaction__details">
         <div class="transaction__icon">
             <span class="fa fa-money fa-2x"></span>
